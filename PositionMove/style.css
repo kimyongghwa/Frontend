@@ -9,7 +9,7 @@ body{
 }
 .MainText{
     text-align: center;
-    font-size: 2em;
+    font-size: 1.7em;
     margin: 0 0 30px 0;
     height: 10vh;
 }
@@ -26,15 +26,13 @@ body{
     height: 300px;
     position: absolute;
     top:30vh;
-    left:15vw;
+    left:14vw;
 }
 
 .btn{
     cursor: pointer;
-    font-size: 3em;
-    position: absolute;
-    top:80vh;
-    left:20vw;
+    font-size: 2.5em;
+    
 }
 
 .box{
@@ -45,13 +43,31 @@ body{
 .first{
     margin-right: 100px;
 }
-.second{
-    
+.second{   
 }
 .infobox{
     display: flex;
+    flex-direction: row;
     width: fit-content;
     height: fit-content;
     margin-right: 100px;
 
+}
+
+.left{
+    margin: 0 0 5vh 7vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 30vw;
+    height: 80vh;
+}
+
+.Name{
+    font-size: 2.6em;
+}
+hr{
+    width: 90%;
+    margin-right: 100px;
 }
