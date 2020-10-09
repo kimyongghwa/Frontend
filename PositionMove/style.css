@@ -10,8 +10,8 @@ body{
 .MainText{
     text-align: center;
     font-size: 1.7em;
-    margin: 0 0 30px 0;
-    height: 10vh;
+    align-items: center;
+    display: flex;
 }
 .layout{
     display: flex;
@@ -19,13 +19,12 @@ body{
     align-items: center;
     justify-content: space-between;
     
-    
 }
 .crowimg{
     width: 300px;
     height: 300px;
     position: absolute;
-    top:30vh;
+    top:33vh;
     left:14vw;
 }
 
@@ -43,7 +42,10 @@ body{
 .first{
     margin-right: 100px;
 }
-.second{   
+.top{
+    display: flex;
+    align-items: center;
+    height: 10vh;   
 }
 .infobox{
     display: flex;
@@ -66,6 +68,7 @@ body{
 
 .Name{
     font-size: 2.6em;
+    margin-top: 50px;
 }
 hr{
     width: 90%;
