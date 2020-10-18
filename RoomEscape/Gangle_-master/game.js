@@ -1,39 +1,8 @@
-var game = new Phaser.Game(1200, 800, Phaser.CANVAS, "GameDiv");
+var game = new Phaser.Game(1200 , 800, Phaser.CANVAS, "GameDiv");
 var text;
 var score;
 var scoreText;
 
-class Player {
-    constructor(){
-        this.setBG = 0;
-        this.sprite = game.add.sprite(450, 1900, "player"); 
-        this.sprite.anchor.setTo(0.5, 0.5);
-        game.physics.arcade.enable(this.sprite);
-        this.key = game.input.keyboard.createCursorKeys();
-        this.jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
-        this.talkKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-        this.sprite.animations.add('move', [0, 1, 2], 7, true);
-        this.moveSpeed= 200;
-        this.jumpSpeed= -350;
-        this.setUI = 0;
-        this.isJumping = false;
-        this.sprite.body.gravity.y = 800;
-        this.sprite.body.collideWorldBounds = true;
-    }
-    update() {
-        
-        score+=0.1;
-    }
-}
-class Crow{
-    constructor(x, y){
-        this.sprite = game.add.sprite(x, y, "Crow"); 
-        this.sprite.anchor.setTo(0.5, 0.5);
-        game.physics.arcade.enable(this.sprite);
-        this.sprite.animations.add('move', [0, 1], 7, true);
-        this.sprite.animations.play('move');
-    }
-}
 class TextPanel{
     constructor(a){
         this.sprite = game.add.sprite(0, 700, "textPanel");
@@ -70,6 +39,26 @@ class Npc{
         this.sprite.anchor.setTo(0.5, 0.5);
     }
 }
+class Furniture{
+    constructor(x, y, name){
+        this.sprite = furniture.create(x, y, name);
+        this.sprite.anchor.setTo(0.5, 0.5);
+    }
+}
+class Item{
+    constructor(name){
+        var y = 50 + (items.length * 200);
+        this.sprite = items.create(1120, y, name);
+        this.sprite.inputEnabled = true;
+        this.sprite.anchor.setTo(0.5, 0.5);
+        this.sprite.input.enableDrag();
+        // this.sprite.events.onDragStart.add(onDragStart, this);
+        this.sprite.events.onDragStop.add(listener, this.sprite);
+    }
+}
+function listener (_gagu){
+    console.log(_gagu.key);
+}
 function Npc1Collision (_pc, _npc){
     if(player.talkKey.downDuration(25) && textpanel.text._text == "" && canTalk){
     npc1 = _npc;
@@ -87,8 +76,55 @@ function Npc1Collision (_pc, _npc){
     }
 }
 }
+function MoverClick(_mover){
+    
+    console.log(_mover);
+    console.log(_mover == mover[0]);
+    if(_mover == mover[0])
+    {
+        if(game.camera.x == 3600)
+            {
+                game.camera.x = 0;
+                mover[0].x -= 3600;
+                mover[1].x -= 3600;
+                trash.children[0].x -= 3600;
+                for(var i =0; i<items.length;i++){
+                    items.children[i].x -= 3600;
+                }
+            }
+        else{
+            game.camera.x += 1200;
+            mover[0].x += 1200;
+            mover[1].x += 1200;
+            trash.children[0].x += 1200;
+            for(var i =0; i<items.length;i++){
+                items.children[i].x += 1200;
+            }
+        }
+    }
+    else if(_mover == mover[1]){
+        if(game.camera.x == 0){
+            game.camera.x = 3600;
+            mover[0].x += 3600;
+            mover[1].x += 3600;
+            trash.children[0].x += 3600;
+            for(var i =0; i<items.length;i++){
+                items.children[i].x += 3600;
+            }
+        }
+        else{
+            game.camera.x -= 1200;
+            mover[0].x -= 1200;
+            mover[1].x -= 1200;
+            trash.children[0].x -= 1200;
+            for(var i =0; i<items.length;i++){
+                items.children[i].x -= 1200;
+            }
+        }
+    }
+}
 var textMessage = new Array( 
-  "(어렸을 적, 그는 그림을 그리고 싶었다.)" //0
+  "(으악)" //0
 , "(그러나 이젠 그림을 그릴  수 없었다.)"
 , "(그에겐 남은 시간이 얼마 없었기 때문에.)"
 , "(도시에서 노동자는 소모품이었다.)"
@@ -118,32 +154,22 @@ var textMessage = new Array(
 , ""
 , ""
 )
-
-var npc1;
-var h0;
+var itemUI;
+var trash;
+var items;
 var lastTextTime = 0;
 var lastJumpTime = 0;
 var textpanel;
-var cardTime;
-var cardTimeOn = false;
-var cardDestroyAble = true;
-var player;
+var mover = [];
 var bullets = [];
 var system;
 var canTalk = false;
 let platforms;
 var music;
-var canSlide = true;
-var canJump = true;
-let cards = [4];
 var canInput = true;
 var firstJumpPower;
 var secondJumpPower;
-let jumpButton;
-let slideButton;
-let rerollButton;
-let trash;
-let npc;
+let furniture;
 var stopTime;
 let random3;
 var play = {
@@ -153,52 +179,41 @@ var play = {
         canJump = true;
         trash = game.add.group();
         platforms = game.add.group();
-        npc = game.add.group();
-        
-        platforms.enableBody = true;
-        let ground = platforms.create(0, 2818, 'ground');
-        
-        ground.body.immovable = true;
-        ground.scale.setTo(200, 2);
-    
+        items = game.add.group();
+        furniture = game.add.group();
+        trash.create(1050, 0, "UI")
+        new Furniture(530, 500, "Table");
+        new Furniture(550, 210, "Monitor");
+        new Furniture(543, 405, "KeyBoard");
+        new Furniture(350, 330, "PC");
+        new Furniture(700, 400, "Mouse");
+        new Item("USB");
+        mover[0] = game.add.sprite(900, 300, "Mover")
+        mover[1] = game.add.sprite(150, 300, "Mover" )
+        for(var i = 0 ; i<2; i++){
+            mover[i].scale.y = 0.4;
+            mover[i].inputEnabled = true;
+            mover[i].events.onInputDown.add(MoverClick, this);
+        }
+        mover[1].scale.x = -0.4;
+        mover[0].scale.x = 0.4;
+        for(var i = 0 ; i<furniture.length; i++){
+            furniture.children[i].scale.x = 0.4;
+            furniture.children[i].scale.y = 0.4;
+        }
+        for(var i = 0 ; i<items.length; i++){
+            items.children[i].scale.x = 0.27;
+            items.children[i].scale.y = 0.27;
+        }
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
         game.stage.backgroundColor = "#1c242e";
         // system = new System();
         game.world.setBounds(0, 0, 222222, 4000);
-        trash.create(334, 1806, 'building3');
-        let h1= platforms.create(100, 200, 'building1');
-        let h2= platforms.create(100, 1806, 'building2');
-        let  h0= platforms.create(100, 2060, 'building4');
-        game.physics.enable(platforms, Phaser.Physics.ARCADE);
-        h0.body.collideWorldBounds = true;
-        h1.body.collideWorldBounds = true;
-        h2.body.collideWorldBounds = true;
-        h0.body.immovable = true;
-        h1.body.immovable = true;
-        h2.body.immovable = true;
-        npc.create(450, 1974, 'Table');
-        npc.create(600, 1978, 'PeopleSit');
-        npc.create(750, 1978, 'PeopleSit');
-        npc.create(900, 1974, 'NPC1');
-        npc.create(1050, 1978, 'PeopleSit');
-        new Crow(1650, 2000);
-        new Crow(1850, 2200);
-        game.physics.enable(npc, Phaser.Physics.ARCADE);
-        for(let i = 0; i< npc.length ; i++){
-            npc.children[i].body.immovable = true;
-            npc.children[i].body.checkCollision.right = false;
-            npc.children[i].body.checkCollision.left = false;
-            npc.children[i].body.checkCollision.down = false;
-            npc.children[i].body.checkCollision.up = false;
-        }
-        npc.enableBody = true;
-        player = new Player();
-        textpanel = new TextPanel(0);
-        player.sprite.animations.play('move');
-        game.camera.follow(player.sprite);
+        // textpanel = new TextPanel(0);
         score = 0;
         game.input.mouse.capture = true;
+        
     },
     update : function(){
         if(music == null)
@@ -208,35 +223,17 @@ var play = {
         music.volume = 0.5;
         music.play();
         }
-       player.update();
-       textpanel.sprite.x = game.camera.x;
-       textpanel.text.x = game.camera.x+600;
-       textpanel.sprite.y = game.camera.y + 600;
-       textpanel.text.y = game.camera.y + 680;
-       if(player.key.right.isDown ){
-           player.sprite.body.velocity.x = player.moveSpeed;
-           player.sprite.scale.setTo(-1, 1);
-       }
-       else if(player.key.left.isDown){
-        player.sprite.body.velocity.x = -player.moveSpeed;
-        player.sprite.scale.setTo(1, 1);
-        }
-        else{
-            player.sprite.body.velocity.x = 0;
-        }
-        if(player.jumpKey.isDown  && lastJumpTime+1100 < game.time.now){
-            lastJumpTime = game.time.now;
-            player.sprite.body.velocity.y = player.jumpSpeed;
-            }
+
+    //    textpanel.sprite.x = game.camera.x;
+    //    textpanel.text.x = game.camera.x+600;
+    //    textpanel.sprite.y = game.camera.y + 600;
+    //    textpanel.text.y = game.camera.y + 680;
+
        //game.input.activePointer.leftButton.isDown
-       if(player.talkKey.downDuration(25)&& lastTextTime+50 < game.time.now){
-            lastTextTime = game.time.now;
-            textpanel.destructor();
-       }
-       if(player.sprite.x > 1350)
-            player.sprite.body.velocity.x = 0;
-       game.physics.arcade.collide(player.sprite, platforms);
-       game.physics.arcade.collide(player.sprite, npc, Npc1Collision, null, this);
+    //    if(player.talkKey.downDuration(25)&& lastTextTime+50 < game.time.now){
+    //         lastTextTime = game.time.now;
+    //         textpanel.destructor();
+    //    }
     }
 }
     game.state.add("Play", play);
